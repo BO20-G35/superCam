@@ -7,14 +7,20 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 func main() {
-	http.Handle("/", handlers())
-	err := http.ListenAndServe(":8000", nil)
-	if err != nil {
-		panic(err)
-	}
+	Unpackfirmware()
+	time.Sleep(1 * time.Second)
+	/*
+		log.Println("listening on http://127.0.0.1:8082")
+		http.Handle("/", handlers())
+		err := http.ListenAndServe(":8082", nil)
+		if err != nil {
+			panic(err)
+		}
+	*/
 }
 
 func handlers() *mux.Router {
@@ -73,7 +79,7 @@ func serveHlsTs(w http.ResponseWriter, r *http.Request, mediaBase, segName strin
 
 func uploadFirmware(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseMultipartForm(32 << 20)
+	_ = r.ParseMultipartForm(32 << 20)
 
 	file, _, err := r.FormFile("uploadfile")
 	if err != nil {
@@ -81,10 +87,10 @@ func uploadFirmware(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintf(w, "error")
 	}
 
-	f, err := os.OpenFile("./assets/firmware.dat", os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile("./assets/firmware.bin", os.O_WRONLY|os.O_CREATE, 0666)
 	defer f.Close()
 
-	io.Copy(f, file)
+	_, _ = io.Copy(f, file)
 
 	http.ServeFile(w, r, "index.html")
 }
