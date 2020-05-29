@@ -1,0 +1,6 @@
+#!/bin/sh
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+if [ -f /bin/supercam.exe ]; then
+    /bin/supercam.exe
+fi

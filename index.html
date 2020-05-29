@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>SUPERCAM CCTV</title>
+    <style>
+        footer{
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <h1>Security camera</h1>
@@ -10,20 +19,31 @@
 
 <!-- https://github.com/video-dev/hls.js/ -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<a href="http://127.0.0.1:8000/settings/">settings</a>
-<video loop id="video"></video>
+<div id="main">
+    <h4>Camera feed</h4>
+    <video loop id="video"></video>
+</div>
+
+<div id="nav">
+    <a id="settings_url" href={{.SettingsURL}}>settings</a>
+</div>
+
+<footer>
+    <p>Made by secIOT.com</p>
+</footer>
+
 
 <script>
     var video = document.getElementById('video');
     if(Hls.isSupported()) {
         var hls = new Hls();
-        hls.loadSource('http://127.0.0.1:8000/media/1/stream/');
+        hls.loadSource({{.StreamURL}});
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED,function() {
             video.play();
         });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = 'http://127.0.0.1:8000/media/1/stream/';
+        video.src = {{.StreamURL}};
         video.addEventListener('loadedmetadata',function() {
             video.play();
         });
